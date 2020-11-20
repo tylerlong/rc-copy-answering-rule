@@ -12,6 +12,31 @@ const rc = new RingCentral({
     extension: process.env.RINGCENTRAL_EXTENSION,
     password: process.env.RINGCENTRAL_PASSWORD!,
   });
-  console.log(rc.token!.access_token);
+
+  const currentAnsweringRule = await rc
+    .restapi()
+    .account()
+    .extension()
+    .answeringRule('business-hours-rule')
+    .get();
+  console.log(JSON.stringify(currentAnsweringRule, null, 2));
+
+  const anotherExtInfo = await rc
+    .restapi()
+    .account()
+    .extension(process.env.RINGCENTRAL_ANOTHER_EXTENSION_ID)
+    .get();
+  console.log(JSON.stringify(anotherExtInfo, null, 2));
+
+  delete currentAnsweringRule.forwarding?.rules?.[0].forwardingNumbers?.[0].id;
+
+  const result = await rc
+    .restapi()
+    .account()
+    .extension(process.env.RINGCENTRAL_ANOTHER_EXTENSION_ID)
+    .answeringRule('business-hours-rule')
+    .put(currentAnsweringRule);
+  console.log(JSON.stringify(result, null, 2));
+
   await rc.revoke();
 })();
