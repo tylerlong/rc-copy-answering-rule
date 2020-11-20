@@ -21,19 +21,30 @@ const rc = new RingCentral({
     .get();
   console.log(JSON.stringify(currentAnsweringRule, null, 2));
 
-  const anotherExtInfo = await rc
-    .restapi()
-    .account()
-    .extension(process.env.RINGCENTRAL_ANOTHER_EXTENSION_ID)
-    .get();
-  console.log(JSON.stringify(anotherExtInfo, null, 2));
+  // const anotherExtInfo = await rc
+  //   .restapi()
+  //   .account()
+  //   .extension(process.env.RINGCENTRAL_ANOTHER_EXTENSION_ID)
+  //   .get();
+  // console.log(JSON.stringify(anotherExtInfo, null, 2));
 
-  delete currentAnsweringRule.forwarding?.rules?.[0].forwardingNumbers?.[0].id;
+  // delete currentAnsweringRule.forwarding?.rules?.[0].forwardingNumbers?.[0].id;
+  currentAnsweringRule.forwarding?.rules?.push({
+    index: 3,
+    ringCount: 4,
+    forwardingNumbers: [
+      {
+        phoneNumber: '+16504206666',
+        label: 'Business Mobile Phone',
+        type: 'BusinessMobilePhone',
+      },
+    ],
+  });
 
   const result = await rc
     .restapi()
     .account()
-    .extension(process.env.RINGCENTRAL_ANOTHER_EXTENSION_ID)
+    .extension()
     .answeringRule('business-hours-rule')
     .put(currentAnsweringRule);
   console.log(JSON.stringify(result, null, 2));
